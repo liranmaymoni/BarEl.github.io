@@ -1,0 +1,12 @@
+name: "Startups in a Peripheral Region"
+navbar:
+  title: "Startups & Periphery"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "about"
+      href: about.html
+output:
+  hrml_document:
+  theme: cosmo
+  highlight: textmate
