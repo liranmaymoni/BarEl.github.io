@@ -2,10 +2,8 @@ name: "Startups in a Peripheral Region"
 navbar:
   title: "Startups & Periphery"
   left:
-    - text: "Home"
-      href: index.html
-    - text: "about"
-      href: about.html
+    - text: "Data Summary"
+      href: data_summary20190716.html
 output:
   html_document:
     theme: cosmo
