@@ -4,6 +4,13 @@ navbar:
   left:
     - text: "Data Summary"
       href: data_summary20190716.html
+    - text: "Pivot Summary"
+      icon: fa-gear
+      menu:
+      - text: "Work Abroad - No"
+        href: abroad_group_no.html
+      - text: "Work Abroad - Yes"
+        href: abroad_group_yes.html
 output:
   html_document:
     theme: cosmo
