@@ -11,6 +11,8 @@ navbar:
         href: abroad_group_no.html
       - text: "Work Abroad - Yes"
         href: abroad_group_yes.html
+    - text: "Test"
+      href: data_summary20190717.html
 output:
   html_document:
     theme: cosmo

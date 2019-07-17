@@ -9,9 +9,10 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="" />
 
 
-<title>README.utf8.md</title>
+<title>Data Summary</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,9 +20,14 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -68,6 +74,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="style.css" type="text/css" />
 
 
 
@@ -260,6 +267,90 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -267,6 +358,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -318,17 +419,93 @@ $(document).ready(function () {
 
 
 
+<h1 class="title toc-ignore">Data Summary</h1>
 
 </div>
 
 
-<div id="barel.github.io" class="section level1">
-<h1>BarEl.github.io</h1>
-<p>Startups in a Peripheral Region</p>
+<style type="text/css">
+body .main-container {
+      max-width: 1600px !important;
+      width: 1600px !important;
+    }
+    body {
+      max-width: 1600px !important;
+    }
+</style>
+<div id="centre-and-periphery-distribution" class="section level1">
+<h1><span class="header-section-number">1</span> Centre and Periphery Distribution</h1>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-1-1.png" width="480" /></p>
+</div>
+<div id="characteristics" class="section level1">
+<h1><span class="header-section-number">2</span> Characteristics</h1>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-2-1.png" width="960" /></p>
+</div>
+<div id="activity-types" class="section level1">
+<h1><span class="header-section-number">3</span> Activity Types</h1>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-3-1.png" width="960" /></p>
+</div>
+<div id="productivity" class="section level1">
+<h1><span class="header-section-number">4</span> Productivity</h1>
+<div id="knowledge-productivity" class="section level2 tabset">
+<h2><span class="header-section-number">4.1</span> Knowledge Productivity</h2>
+<div id="patents" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Patents</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-4-1.png" width="480" /></p>
+</div>
+</div>
+<div id="last-year-growth" class="section level2 tabset">
+<h2><span class="header-section-number">4.2</span> Last Year Growth</h2>
+<div id="employment-change" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Employment Change</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-5-1.png" width="480" /></p>
+</div>
+<div id="sales-growth" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Sales Growth</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-6-1.png" width="480" /></p>
+</div>
+<div id="improvement-in-product-process-or-service" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> Improvement in Product, Process or Service</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-7-1.png" width="480" /></p>
+</div>
+<div id="revenue-from-selling-knowledge-or-permits" class="section level3">
+<h3><span class="header-section-number">4.2.4</span> Revenue from Selling Knowledge or Permits</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-8-1.png" width="480" /></p>
+</div>
+<div id="exporting-of-products-or-services" class="section level3">
+<h3><span class="header-section-number">4.2.5</span> Exporting of Products or Services</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-9-1.png" width="480" /></p>
+</div>
+<div id="investing-in-other-countries" class="section level3">
+<h3><span class="header-section-number">4.2.6</span> Investing in Other Countries</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-10-1.png" width="480" /></p>
+</div>
+</div>
+<div id="others" class="section level2 tabset">
+<h2><span class="header-section-number">4.3</span> Others</h2>
+<div id="trademark" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Trademark</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-11-1.png" width="480" /></p>
+</div>
+<div id="business-model" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Business Model</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-12-1.png" width="480" /></p>
+</div>
+<div id="organizational-model" class="section level3">
+<h3><span class="header-section-number">4.3.3</span> Organizational Model</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-13-1.png" width="480" /></p>
+</div>
+<div id="generic-top-level-doman-gtld" class="section level3">
+<h3><span class="header-section-number">4.3.4</span> generic Top Level Doman (gTLD)</h3>
+<p><img src="data_summary20190717_files/figure-html/unnamed-chunk-14-1.png" width="480" /></p>
+</div>
+</div>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
