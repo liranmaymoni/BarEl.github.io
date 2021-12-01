@@ -1,0 +1,1795 @@
+---
+title: "Communication in Asset Markets - Aggregate Level" 
+author: "Lahav, Maymoni & Neugebauer"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    highlight: tango
+---
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+library(tidyverse)
+library(varhandle)
+library(ggplot2)
+library(ggpubr)
+ 
+```
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+T1S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0844team1.csv", header=FALSE, sep=",")
+T1S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0851team2.csv", header=FALSE, sep=",")
+T1S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0853team3.csv", header=FALSE, sep=",")
+T1S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1708team1.csv", header=FALSE, sep=",")
+T1S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1702team2.csv", header=FALSE, sep=",")
+T1S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1711team3.csv", header=FALSE, sep=",")
+T3S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0845team1.csv", header=FALSE, sep=",")
+T3S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0847team2.csv", header=FALSE, sep=",")
+T3S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0816team3.csv", header=FALSE, sep=",")
+T3S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0938team1.csv", header=FALSE, sep=",")
+T3S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0924team2.csv", header=FALSE, sep=",")
+T3S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0926team3.csv", header=FALSE, sep=",")
+T4S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1128team1.csv", header=FALSE, sep=",")
+T4S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1100team2.csv", header=FALSE, sep=",")
+T4S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1109team3.csv", header=FALSE, sep=",")
+T4S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1334team1.csv", header=FALSE, sep=",")
+T4S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1320team2.csv", header=FALSE, sep=",")
+T4S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1323team3.csv", header=FALSE, sep=",")
+```
+
+# HL, CRT and Gender distribution
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=9}
+market_prices_T1S1 = unfactor(as.factor(data.frame(T1S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S2 = unfactor(as.factor(data.frame(T1S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S3 = unfactor(as.factor(data.frame(T1S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S4 = unfactor(as.factor(data.frame(T1S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S5 = unfactor(as.factor(data.frame(T1S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S6 = unfactor(as.factor(data.frame(T1S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S1)
+prices = cbind(prices,market_prices_T1S2)
+prices = cbind(prices,market_prices_T1S3)
+prices = cbind(prices,market_prices_T1S4)
+prices = cbind(prices,market_prices_T1S5)
+prices = as.data.frame(cbind(prices,market_prices_T1S6))
+
+control = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S1, color = "S1")) + geom_point(aes(y = market_prices_T1S1, color = "S1")) +
+  geom_line(aes(y = market_prices_T1S2, color = "S2")) + geom_point(aes(y = market_prices_T1S2, color = "S2")) + 
+  geom_line(aes(y = market_prices_T1S3, color = "S3")) + geom_point(aes(y = market_prices_T1S3, color = "S3")) + 
+  geom_line(aes(y = market_prices_T1S4, color = "S4")) + geom_point(aes(y = market_prices_T1S4, color = "S4")) + 
+  geom_line(aes(y = market_prices_T1S5, color = "S5")) + geom_point(aes(y = market_prices_T1S5, color = "S5")) + 
+  geom_line(aes(y = market_prices_T1S6, color = "S6")) + geom_point(aes(y = market_prices_T1S6, color = "S6")) + 
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50)) +
+  ggtitle("Control")
+
+market_prices_T3S1 = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S2 = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S3 = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S4 = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S5 = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S6 = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S1)
+prices = cbind(prices,market_prices_T3S2)
+prices = cbind(prices,market_prices_T3S3)
+prices = cbind(prices,market_prices_T3S4)
+prices = cbind(prices,market_prices_T3S5)
+prices = as.data.frame(cbind(prices,market_prices_T3S6))
+
+
+treatment3 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S1, color = "S1")) + geom_point(aes(y = market_prices_T3S1, color = "S1")) +
+  geom_line(aes(y = market_prices_T3S2, color = "S2")) + geom_point(aes(y = market_prices_T3S2, color = "S2")) + 
+  geom_line(aes(y = market_prices_T3S3, color = "S3")) + geom_point(aes(y = market_prices_T3S3, color = "S3")) + 
+  geom_line(aes(y = market_prices_T3S4, color = "S4")) + geom_point(aes(y = market_prices_T3S4, color = "S4")) + 
+  geom_line(aes(y = market_prices_T3S5, color = "S5")) + geom_point(aes(y = market_prices_T3S5, color = "S5")) + 
+  geom_line(aes(y = market_prices_T3S6, color = "S6")) + geom_point(aes(y = market_prices_T3S6, color = "S6")) + 
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50)) +
+  ggtitle("Treatment 3")
+
+market_prices_T4S1 = unfactor(as.factor(data.frame(T4S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S2 = unfactor(as.factor(data.frame(T4S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S3 = unfactor(as.factor(data.frame(T4S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S4 = unfactor(as.factor(data.frame(T4S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S5 = unfactor(as.factor(data.frame(T4S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S6 = unfactor(as.factor(data.frame(T4S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S1)
+prices = cbind(prices,market_prices_T4S2)
+prices = cbind(prices,market_prices_T4S3)
+prices = cbind(prices,market_prices_T4S4)
+prices = cbind(prices,market_prices_T4S5)
+prices = as.data.frame(cbind(prices,market_prices_T4S6))
+
+
+treatment4 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S1, color = "S1")) + geom_point(aes(y = market_prices_T4S1, color = "S1")) +
+  geom_line(aes(y = market_prices_T4S2, color = "S2")) + geom_point(aes(y = market_prices_T4S2, color = "S2")) + 
+  geom_line(aes(y = market_prices_T4S3, color = "S3")) + geom_point(aes(y = market_prices_T4S3, color = "S3")) + 
+  geom_line(aes(y = market_prices_T4S4, color = "S4")) + geom_point(aes(y = market_prices_T4S4, color = "S4")) + 
+  geom_line(aes(y = market_prices_T4S5, color = "S5")) + geom_point(aes(y = market_prices_T4S5, color = "S5")) + 
+  geom_line(aes(y = market_prices_T4S6, color = "S6")) + geom_point(aes(y = market_prices_T4S6, color = "S6")) + 
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + 
+  ylim(NA, 400) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 400))  +
+  ggtitle("Treatment 4")
+  
+ggarrange(control, treatment3, treatment4,
+                    ncol = 2, nrow = 2,common.legend = TRUE, legend = "bottom")
+```
+
+# Prices vs Intentions {.tabset}
+
+## Control Treatment
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE, fig.width=9, fig.height=9}
+market_prices_T1S1 = unfactor(as.factor(data.frame(T1S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S1_i = unfactor(as.factor(data.frame(T1S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S1)
+prices = cbind(prices,market_prices_T1S1_i)
+prices = as.data.frame(prices)
+
+S1 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S1, color = "prices")) + geom_point(aes(y = market_prices_T1S1, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S1_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S1_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 1")
+
+market_prices_T1S2 = unfactor(as.factor(data.frame(T1S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S2_i = unfactor(as.factor(data.frame(T1S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S2)
+prices = cbind(prices,market_prices_T1S2_i)
+prices = as.data.frame(prices)
+
+S2 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S2, color = "prices")) + geom_point(aes(y = market_prices_T1S2, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S2_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S2_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 2")
+
+market_prices_T1S3 = unfactor(as.factor(data.frame(T1S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S3_i = unfactor(as.factor(data.frame(T1S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S3)
+prices = cbind(prices,market_prices_T1S3_i)
+prices = as.data.frame(prices)
+
+S3 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S3, color = "prices")) + geom_point(aes(y = market_prices_T1S3, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S3_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S3_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 3")
+
+market_prices_T1S4 = unfactor(as.factor(data.frame(T1S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S4_i = unfactor(as.factor(data.frame(T1S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S4)
+prices = cbind(prices,market_prices_T1S4_i)
+prices = as.data.frame(prices)
+
+S4 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S4, color = "prices")) + geom_point(aes(y = market_prices_T1S4, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S4_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S4_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 4")
+
+
+market_prices_T1S5 = unfactor(as.factor(data.frame(T1S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S5_i = unfactor(as.factor(data.frame(T1S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S5)
+prices = cbind(prices,market_prices_T1S5_i)
+prices = as.data.frame(prices)
+
+S5 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S5, color = "prices")) + geom_point(aes(y = market_prices_T1S5, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S5_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S5_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 5")
+
+
+market_prices_T1S6 = unfactor(as.factor(data.frame(T1S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T1S6_i = unfactor(as.factor(data.frame(T1S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T1S6)
+prices = cbind(prices,market_prices_T1S6_i)
+prices = as.data.frame(prices)
+
+S6 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T1S6, color = "prices")) + geom_point(aes(y = market_prices_T1S6, color = "prices")) +
+  geom_line(aes(y = market_prices_T1S6_i, color = "intentions")) + geom_point(aes(y = market_prices_T1S6_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 6")
+
+ggarrange(S1, S2, S3, S4, S5, S6,
+                    ncol = 2, nrow = 3,common.legend = TRUE, legend = "top")
+```
+
+
+## Treatment 3
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE, fig.width=9, fig.height=9}
+market_prices_T3S1 = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S1_i = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S1)
+prices = cbind(prices,market_prices_T3S1_i)
+prices = as.data.frame(prices)
+
+S1 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S1, color = "prices")) + geom_point(aes(y = market_prices_T3S1, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S1_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S1_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 1")
+
+market_prices_T3S2 = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S2_i = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S2)
+prices = cbind(prices,market_prices_T3S2_i)
+prices = as.data.frame(prices)
+
+S2 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S2, color = "prices")) + geom_point(aes(y = market_prices_T3S2, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S2_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S2_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 2")
+
+market_prices_T3S3 = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S3_i = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S3)
+prices = cbind(prices,market_prices_T3S3_i)
+prices = as.data.frame(prices)
+
+S3 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S3, color = "prices")) + geom_point(aes(y = market_prices_T3S3, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S3_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S3_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 3")
+
+market_prices_T3S4 = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S4_i = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S4)
+prices = cbind(prices,market_prices_T3S4_i)
+prices = as.data.frame(prices)
+
+S4 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S4, color = "prices")) + geom_point(aes(y = market_prices_T3S4, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S4_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S4_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 4")
+
+
+market_prices_T3S5 = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S5_i = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S5)
+prices = cbind(prices,market_prices_T3S5_i)
+prices = as.data.frame(prices)
+
+S5 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S5, color = "prices")) + geom_point(aes(y = market_prices_T3S5, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S5_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S5_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 5")
+
+
+market_prices_T3S6 = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T3S6_i = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T3S6)
+prices = cbind(prices,market_prices_T3S6_i)
+prices = as.data.frame(prices)
+
+S6 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T3S6, color = "prices")) + geom_point(aes(y = market_prices_T3S6, color = "prices")) +
+  geom_line(aes(y = market_prices_T3S6_i, color = "intentions")) + geom_point(aes(y = market_prices_T3S6_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 6")
+
+ggarrange(S1, S2, S3, S4, S5, S6,
+                    ncol = 2, nrow = 3,common.legend = TRUE, legend = "top")
+```
+
+
+## Treatment 4
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE, fig.width=9, fig.height=9}
+market_prices_T4S1 = unfactor(as.factor(data.frame(T4S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S1_i = unfactor(as.factor(data.frame(T4S1 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S1)
+prices = cbind(prices,market_prices_T4S1_i)
+prices = as.data.frame(prices)
+
+S1 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S1, color = "prices")) + geom_point(aes(y = market_prices_T4S1, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S1_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S1_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 1")
+
+market_prices_T4S2 = unfactor(as.factor(data.frame(T4S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S2_i = unfactor(as.factor(data.frame(T4S2 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S2)
+prices = cbind(prices,market_prices_T4S2_i)
+prices = as.data.frame(prices)
+
+S2 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S2, color = "prices")) + geom_point(aes(y = market_prices_T4S2, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S2_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S2_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 2")
+
+market_prices_T4S3 = unfactor(as.factor(data.frame(T4S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S3_i = unfactor(as.factor(data.frame(T4S3 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S3)
+prices = cbind(prices,market_prices_T4S3_i)
+prices = as.data.frame(prices)
+
+S3 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S3, color = "prices")) + geom_point(aes(y = market_prices_T4S3, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S3_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S3_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 3")
+
+market_prices_T4S4 = unfactor(as.factor(data.frame(T4S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S4_i = unfactor(as.factor(data.frame(T4S4 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S4)
+prices = cbind(prices,market_prices_T4S4_i)
+prices = as.data.frame(prices)
+
+S4 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S4, color = "prices")) + geom_point(aes(y = market_prices_T4S4, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S4_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S4_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 4")
+
+
+market_prices_T4S5 = unfactor(as.factor(data.frame(T4S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S5_i = unfactor(as.factor(data.frame(T4S5 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S5)
+prices = cbind(prices,market_prices_T4S5_i)
+prices = as.data.frame(prices)
+
+S5 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S5, color = "prices")) + geom_point(aes(y = market_prices_T4S5, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S5_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S5_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 5")
+
+
+market_prices_T4S6 = unfactor(as.factor(data.frame(T4S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(50:64)]))
+market_prices_T4S6_i = unfactor(as.factor(data.frame(T4S6 %>% filter(V3=="subjects", V5==1,V4==15))[c(66:80)]))
+fundemental_value = c(180,168,156,144,132,120,108,96,84,72,60,48,36,24,12)
+
+prices = c()
+period = c(1:15)
+prices = cbind(prices,period)
+prices = cbind(prices,fundemental_value)
+prices = cbind(prices,market_prices_T4S6)
+prices = cbind(prices,market_prices_T4S6_i)
+prices = as.data.frame(prices)
+
+S6 = ggplot(data=prices, aes(x=period)) + 
+  geom_line(aes(y = market_prices_T4S6, color = "prices")) + geom_point(aes(y = market_prices_T4S6, color = "prices")) +
+  geom_line(aes(y = market_prices_T4S6_i, color = "intentions")) + geom_point(aes(y = market_prices_T4S6_i, color = "intentions"))+
+  geom_line(aes(y = fundemental_value), linetype = "longdash", color = "black", size = 1) + theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices", breaks = seq(0, 400, by = 50),limits = c(0, 401))  +
+  ggtitle("Session 6")
+
+ggarrange(S1, S2, S3, S4, S5, S6,
+                    ncol = 2, nrow = 3,common.legend = TRUE, legend = "top")
+```
+
+# Beliefs vs Inform to Others
+
+## Treatment 3 {.tabset}
+
+### With S.D
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=27}
+
+
+
+### Session 1
+T3S1_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S1_beliefs = cbind(T3S1_beliefs,y)
+ 
+}
+T3S1_beliefs = as.data.frame(T3S1_beliefs)
+T3S1_beliefs$means = apply(T3S1_beliefs,1,mean)
+T3S1_beliefs$sd = apply(T3S1_beliefs,1,sd)
+
+T3S1_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S1_inform = cbind(T3S1_inform,y)
+ 
+}
+ 
+T3S1_inform = as.data.frame(T3S1_inform)
+T3S1_inform$means_i = apply(T3S1_inform,1,mean)
+T3S1_inform$sd_i = apply(T3S1_inform,1,sd)
+
+T3S1_beliefs = cbind(T3S1_beliefs,T3S1_inform)
+
+market_prices_T3S1 = as.data.frame(market_prices_T3S1)
+T3S1_beliefs = cbind(T3S1_beliefs,market_prices_T3S1)
+colnames(T3S1_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 2
+T3S2_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S2_beliefs = cbind(T3S2_beliefs,y)
+ 
+}
+T3S2_beliefs = as.data.frame(T3S2_beliefs)
+T3S2_beliefs$means = apply(T3S2_beliefs,1,mean)
+T3S2_beliefs$sd = apply(T3S2_beliefs,1,sd)
+
+T3S2_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S2_inform = cbind(T3S2_inform,y)
+ 
+}
+ 
+T3S2_inform = as.data.frame(T3S2_inform)
+T3S2_inform$means_i = apply(T3S2_inform,1,mean)
+T3S2_inform$sd_i = apply(T3S2_inform,1,sd)
+
+T3S2_beliefs = cbind(T3S2_beliefs,T3S2_inform)
+market_prices_T3S2 = as.data.frame(market_prices_T3S2)
+T3S2_beliefs = cbind(T3S2_beliefs,market_prices_T3S2)
+colnames(T3S2_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 3
+T3S3_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S3_beliefs = cbind(T3S3_beliefs,y)
+ 
+}
+T3S3_beliefs = as.data.frame(T3S3_beliefs)
+T3S3_beliefs$means = apply(T3S3_beliefs,1,mean)
+T3S3_beliefs$sd = apply(T3S3_beliefs,1,sd)
+
+T3S3_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S3_inform = cbind(T3S3_inform,y)
+ 
+}
+ 
+T3S3_inform = as.data.frame(T3S3_inform)
+T3S3_inform$means_i = apply(T3S3_inform,1,mean)
+T3S3_inform$sd_i = apply(T3S3_inform,1,sd)
+
+T3S3_beliefs = cbind(T3S3_beliefs,T3S3_inform)
+market_prices_T3S3 = as.data.frame(market_prices_T3S3)
+T3S3_beliefs = cbind(T3S3_beliefs,market_prices_T3S3)
+colnames(T3S3_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+
+### Session 4
+T3S4_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S4_beliefs = cbind(T3S4_beliefs,y)
+ 
+}
+T3S4_beliefs = as.data.frame(T3S4_beliefs)
+T3S4_beliefs$means = apply(T3S4_beliefs,1,mean)
+T3S4_beliefs$sd = apply(T3S4_beliefs,1,sd)
+
+T3S4_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S4_inform = cbind(T3S4_inform,y)
+ 
+}
+ 
+T3S4_inform = as.data.frame(T3S4_inform)
+T3S4_inform$means_i = apply(T3S4_inform,1,mean)
+T3S4_inform$sd_i = apply(T3S4_inform,1,sd)
+
+T3S4_beliefs = cbind(T3S4_beliefs,T3S4_inform)
+market_prices_T3S4 = as.data.frame(market_prices_T3S4)
+T3S4_beliefs = cbind(T3S4_beliefs,market_prices_T3S4)
+colnames(T3S4_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 5
+T3S5_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S5_beliefs = cbind(T3S5_beliefs,y)
+ 
+}
+T3S5_beliefs = as.data.frame(T3S5_beliefs)
+T3S5_beliefs$means = apply(T3S5_beliefs,1,mean)
+T3S5_beliefs$sd = apply(T3S5_beliefs,1,sd)
+
+T3S5_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S5_inform = cbind(T3S5_inform,y)
+ 
+}
+ 
+T3S5_inform = as.data.frame(T3S5_inform)
+T3S5_inform$means_i = apply(T3S5_inform,1,mean)
+T3S5_inform$sd_i = apply(T3S5_inform,1,sd)
+
+T3S5_beliefs = cbind(T3S5_beliefs,T3S5_inform)
+market_prices_T3S5 = as.data.frame(market_prices_T3S5)
+T3S5_beliefs = cbind(T3S5_beliefs,market_prices_T3S5)
+colnames(T3S5_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 6
+T3S6_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S6_beliefs = cbind(T3S6_beliefs,y)
+ 
+}
+T3S6_beliefs = as.data.frame(T3S6_beliefs)
+T3S6_beliefs$means = apply(T3S6_beliefs,1,mean)
+T3S6_beliefs$sd = apply(T3S6_beliefs,1,sd)
+
+T3S6_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S6_inform = cbind(T3S6_inform,y)
+ 
+}
+ 
+T3S6_inform = as.data.frame(T3S6_inform)
+T3S6_inform$means_i = apply(T3S6_inform,1,mean)
+T3S6_inform$sd_i = apply(T3S6_inform,1,sd)
+
+T3S6_beliefs = cbind(T3S6_beliefs,T3S6_inform)
+market_prices_T3S6 = as.data.frame(market_prices_T3S6)
+T3S6_beliefs = cbind(T3S6_beliefs,market_prices_T3S6)
+colnames(T3S6_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+period = c(1:15)
+
+T3S1_b_plot = ggplot(data=T3S1_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 1") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S2_b_plot = ggplot(data=T3S2_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 2") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S3_b_plot = ggplot(data=T3S3_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 3") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S4_b_plot = ggplot(data=T3S4_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 4") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S5_b_plot = ggplot(data=T3S5_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 5") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S6_b_plot = ggplot(data=T3S6_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 6") +
+  geom_line(aes(y = prices, color = "price"))
+
+ggarrange(T3S1_b_plot, T3S2_b_plot,T3S3_b_plot,T3S4_b_plot,T3S5_b_plot,T3S6_b_plot,
+                    ncol = 1, nrow = 6, legend = "top")
+```
+
+### Without S.D
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=27}
+
+
+
+### Session 1
+T3S1_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S1_beliefs = cbind(T3S1_beliefs,y)
+ 
+}
+T3S1_beliefs = as.data.frame(T3S1_beliefs)
+T3S1_beliefs$means = apply(T3S1_beliefs,1,mean)
+T3S1_beliefs$sd = apply(T3S1_beliefs,1,sd)
+
+T3S1_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S1_inform = cbind(T3S1_inform,y)
+ 
+}
+ 
+T3S1_inform = as.data.frame(T3S1_inform)
+T3S1_inform$means_i = apply(T3S1_inform,1,mean)
+T3S1_inform$sd_i = apply(T3S1_inform,1,sd)
+
+T3S1_beliefs = cbind(T3S1_beliefs,T3S1_inform)
+
+market_prices_T3S1 = as.data.frame(market_prices_T3S1)
+T3S1_beliefs = cbind(T3S1_beliefs,market_prices_T3S1)
+colnames(T3S1_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 2
+T3S2_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S2_beliefs = cbind(T3S2_beliefs,y)
+ 
+}
+T3S2_beliefs = as.data.frame(T3S2_beliefs)
+T3S2_beliefs$means = apply(T3S2_beliefs,1,mean)
+T3S2_beliefs$sd = apply(T3S2_beliefs,1,sd)
+
+T3S2_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S2_inform = cbind(T3S2_inform,y)
+ 
+}
+ 
+T3S2_inform = as.data.frame(T3S2_inform)
+T3S2_inform$means_i = apply(T3S2_inform,1,mean)
+T3S2_inform$sd_i = apply(T3S2_inform,1,sd)
+
+T3S2_beliefs = cbind(T3S2_beliefs,T3S2_inform)
+market_prices_T3S2 = as.data.frame(market_prices_T3S2)
+T3S2_beliefs = cbind(T3S2_beliefs,market_prices_T3S2)
+colnames(T3S2_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 3
+T3S3_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S3_beliefs = cbind(T3S3_beliefs,y)
+ 
+}
+T3S3_beliefs = as.data.frame(T3S3_beliefs)
+T3S3_beliefs$means = apply(T3S3_beliefs,1,mean)
+T3S3_beliefs$sd = apply(T3S3_beliefs,1,sd)
+
+T3S3_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S3_inform = cbind(T3S3_inform,y)
+ 
+}
+ 
+T3S3_inform = as.data.frame(T3S3_inform)
+T3S3_inform$means_i = apply(T3S3_inform,1,mean)
+T3S3_inform$sd_i = apply(T3S3_inform,1,sd)
+
+T3S3_beliefs = cbind(T3S3_beliefs,T3S3_inform)
+market_prices_T3S3 = as.data.frame(market_prices_T3S3)
+T3S3_beliefs = cbind(T3S3_beliefs,market_prices_T3S3)
+colnames(T3S3_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+
+### Session 4
+T3S4_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S4_beliefs = cbind(T3S4_beliefs,y)
+ 
+}
+T3S4_beliefs = as.data.frame(T3S4_beliefs)
+T3S4_beliefs$means = apply(T3S4_beliefs,1,mean)
+T3S4_beliefs$sd = apply(T3S4_beliefs,1,sd)
+
+T3S4_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S4_inform = cbind(T3S4_inform,y)
+ 
+}
+ 
+T3S4_inform = as.data.frame(T3S4_inform)
+T3S4_inform$means_i = apply(T3S4_inform,1,mean)
+T3S4_inform$sd_i = apply(T3S4_inform,1,sd)
+
+T3S4_beliefs = cbind(T3S4_beliefs,T3S4_inform)
+market_prices_T3S4 = as.data.frame(market_prices_T3S4)
+T3S4_beliefs = cbind(T3S4_beliefs,market_prices_T3S4)
+colnames(T3S4_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 5
+T3S5_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S5_beliefs = cbind(T3S5_beliefs,y)
+ 
+}
+T3S5_beliefs = as.data.frame(T3S5_beliefs)
+T3S5_beliefs$means = apply(T3S5_beliefs,1,mean)
+T3S5_beliefs$sd = apply(T3S5_beliefs,1,sd)
+
+T3S5_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S5_inform = cbind(T3S5_inform,y)
+ 
+}
+ 
+T3S5_inform = as.data.frame(T3S5_inform)
+T3S5_inform$means_i = apply(T3S5_inform,1,mean)
+T3S5_inform$sd_i = apply(T3S5_inform,1,sd)
+
+T3S5_beliefs = cbind(T3S5_beliefs,T3S5_inform)
+market_prices_T3S5 = as.data.frame(market_prices_T3S5)
+T3S5_beliefs = cbind(T3S5_beliefs,market_prices_T3S5)
+colnames(T3S5_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 6
+T3S6_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+  T3S6_beliefs = cbind(T3S6_beliefs,y)
+ 
+}
+T3S6_beliefs = as.data.frame(T3S6_beliefs)
+T3S6_beliefs$means = apply(T3S6_beliefs,1,mean)
+T3S6_beliefs$sd = apply(T3S6_beliefs,1,sd)
+
+T3S6_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+  T3S6_inform = cbind(T3S6_inform,y)
+ 
+}
+ 
+T3S6_inform = as.data.frame(T3S6_inform)
+T3S6_inform$means_i = apply(T3S6_inform,1,mean)
+T3S6_inform$sd_i = apply(T3S6_inform,1,sd)
+
+T3S6_beliefs = cbind(T3S6_beliefs,T3S6_inform)
+market_prices_T3S6 = as.data.frame(market_prices_T3S6)
+T3S6_beliefs = cbind(T3S6_beliefs,market_prices_T3S6)
+colnames(T3S6_beliefs) = c("Subject1B","Subject2B","Subject3B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subject3B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+period = c(1:15)
+
+T3S1_b_plot = ggplot(data=T3S1_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 1") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S2_b_plot = ggplot(data=T3S2_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 2") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S3_b_plot = ggplot(data=T3S3_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 3") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S4_b_plot = ggplot(data=T3S4_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 4") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S5_b_plot = ggplot(data=T3S5_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 5") +
+  geom_line(aes(y = prices, color = "price"))
+
+T3S6_b_plot = ggplot(data=T3S6_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 6") +
+  geom_line(aes(y = prices, color = "price"))
+
+ggarrange(T3S1_b_plot, T3S2_b_plot,T3S3_b_plot,T3S4_b_plot,T3S5_b_plot,T3S6_b_plot,
+                    ncol = 1, nrow = 6, legend = "top")
+```
+
+
+## Treatment 4 {.tabset}
+
+### With S.D
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=27}
+
+
+
+### Session 1
+ T4S1_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S1_beliefs = cbind( T4S1_beliefs,y)
+ 
+}
+ T4S1_beliefs = as.data.frame( T4S1_beliefs)
+ T4S1_beliefs$means = apply( T4S1_beliefs,1,mean)
+ T4S1_beliefs$sd = apply( T4S1_beliefs,1,sd)
+
+ T4S1_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S1_inform = cbind( T4S1_inform,y)
+ 
+}
+ 
+ T4S1_inform = as.data.frame( T4S1_inform)
+ T4S1_inform$means_i = apply( T4S1_inform,1,mean)
+ T4S1_inform$sd_i = apply( T4S1_inform,1,sd)
+
+ T4S1_beliefs = cbind( T4S1_beliefs, T4S1_inform)
+
+market_prices_T4S1 = as.data.frame(market_prices_T4S1)
+ T4S1_beliefs = cbind( T4S1_beliefs,market_prices_T4S1)
+colnames( T4S1_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 2
+ T4S2_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S2_beliefs = cbind( T4S2_beliefs,y)
+ 
+}
+ T4S2_beliefs = as.data.frame( T4S2_beliefs)
+ T4S2_beliefs$means = apply( T4S2_beliefs,1,mean)
+ T4S2_beliefs$sd = apply( T4S2_beliefs,1,sd)
+
+ T4S2_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S2_inform = cbind( T4S2_inform,y)
+ 
+}
+ 
+ T4S2_inform = as.data.frame( T4S2_inform)
+ T4S2_inform$means_i = apply( T4S2_inform,1,mean)
+ T4S2_inform$sd_i = apply( T4S2_inform,1,sd)
+
+ T4S2_beliefs = cbind( T4S2_beliefs, T4S2_inform)
+market_prices_T4S2 = as.data.frame(market_prices_T4S2)
+ T4S2_beliefs = cbind( T4S2_beliefs,market_prices_T4S2)
+colnames( T4S2_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 3
+ T4S3_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S3_beliefs = cbind( T4S3_beliefs,y)
+ 
+}
+ T4S3_beliefs = as.data.frame( T4S3_beliefs)
+ T4S3_beliefs$means = apply( T4S3_beliefs,1,mean)
+ T4S3_beliefs$sd = apply( T4S3_beliefs,1,sd)
+
+ T4S3_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S3_inform = cbind( T4S3_inform,y)
+ 
+}
+ 
+ T4S3_inform = as.data.frame( T4S3_inform)
+ T4S3_inform$means_i = apply( T4S3_inform,1,mean)
+ T4S3_inform$sd_i = apply( T4S3_inform,1,sd)
+
+ T4S3_beliefs = cbind( T4S3_beliefs, T4S3_inform)
+market_prices_T4S3 = as.data.frame(market_prices_T4S3)
+ T4S3_beliefs = cbind( T4S3_beliefs,market_prices_T4S3)
+colnames( T4S3_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+
+### Session 4
+ T4S4_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S4_beliefs = cbind( T4S4_beliefs,y)
+ 
+}
+ T4S4_beliefs = as.data.frame( T4S4_beliefs)
+ T4S4_beliefs$means = apply( T4S4_beliefs,1,mean)
+ T4S4_beliefs$sd = apply( T4S4_beliefs,1,sd)
+
+ T4S4_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S4_inform = cbind( T4S4_inform,y)
+ 
+}
+ 
+ T4S4_inform = as.data.frame( T4S4_inform)
+ T4S4_inform$means_i = apply( T4S4_inform,1,mean)
+ T4S4_inform$sd_i = apply( T4S4_inform,1,sd)
+
+ T4S4_beliefs = cbind( T4S4_beliefs, T4S4_inform)
+market_prices_T4S4 = as.data.frame(market_prices_T4S4)
+ T4S4_beliefs = cbind( T4S4_beliefs,market_prices_T4S4)
+colnames( T4S4_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 5
+ T4S5_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S5_beliefs = cbind( T4S5_beliefs,y)
+ 
+}
+ T4S5_beliefs = as.data.frame( T4S5_beliefs)
+ T4S5_beliefs$means = apply( T4S5_beliefs,1,mean)
+ T4S5_beliefs$sd = apply( T4S5_beliefs,1,sd)
+
+ T4S5_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S5_inform = cbind( T4S5_inform,y)
+ 
+}
+ 
+ T4S5_inform = as.data.frame( T4S5_inform)
+ T4S5_inform$means_i = apply( T4S5_inform,1,mean)
+ T4S5_inform$sd_i = apply( T4S5_inform,1,sd)
+
+ T4S5_beliefs = cbind( T4S5_beliefs, T4S5_inform)
+market_prices_T4S5 = as.data.frame(market_prices_T4S5)
+ T4S5_beliefs = cbind( T4S5_beliefs,market_prices_T4S5)
+colnames( T4S5_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 6
+ T4S6_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S6_beliefs = cbind( T4S6_beliefs,y)
+ 
+}
+ T4S6_beliefs = as.data.frame( T4S6_beliefs)
+ T4S6_beliefs$means = apply( T4S6_beliefs,1,mean)
+ T4S6_beliefs$sd = apply( T4S6_beliefs,1,sd)
+
+ T4S6_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S6_inform = cbind( T4S6_inform,y)
+ 
+}
+ 
+ T4S6_inform = as.data.frame( T4S6_inform)
+ T4S6_inform$means_i = apply( T4S6_inform,1,mean)
+ T4S6_inform$sd_i = apply( T4S6_inform,1,sd)
+
+ T4S6_beliefs = cbind( T4S6_beliefs, T4S6_inform)
+market_prices_T4S6 = as.data.frame(market_prices_T4S6)
+ T4S6_beliefs = cbind( T4S6_beliefs,market_prices_T4S6)
+colnames( T4S6_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+period = c(1:15)
+
+ T4S1_b_plot = ggplot(data= T4S1_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 1") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S2_b_plot = ggplot(data= T4S2_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 2") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S3_b_plot = ggplot(data= T4S3_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 3") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S4_b_plot = ggplot(data= T4S4_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 4") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S5_b_plot = ggplot(data= T4S5_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 5") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S6_b_plot = ggplot(data= T4S6_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd,color = "Belief"), width=.2,position=position_dodge(0.05)) +  
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+    geom_errorbar(aes(ymin=mean_i-sd, ymax=mean_i+sd,color = "Inform"), width=.2,position=position_dodge(0.05))+ theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 6") +
+  geom_line(aes(y = prices, color = "price"))
+
+ggarrange( T4S1_b_plot,  T4S2_b_plot, T4S3_b_plot, T4S4_b_plot, T4S5_b_plot, T4S6_b_plot,
+                    ncol = 1, nrow = 6, legend = "top")
+```
+
+### Without S.D
+
+```{r, echo= FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=27}
+
+
+
+### Session 1
+ T4S1_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S1_beliefs = cbind( T4S1_beliefs,y)
+ 
+}
+ T4S1_beliefs = as.data.frame( T4S1_beliefs)
+ T4S1_beliefs$means = apply( T4S1_beliefs,1,mean)
+ T4S1_beliefs$sd = apply( T4S1_beliefs,1,sd)
+
+ T4S1_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S1 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S1_inform = cbind( T4S1_inform,y)
+ 
+}
+ 
+ T4S1_inform = as.data.frame( T4S1_inform)
+ T4S1_inform$means_i = apply( T4S1_inform,1,mean)
+ T4S1_inform$sd_i = apply( T4S1_inform,1,sd)
+
+ T4S1_beliefs = cbind( T4S1_beliefs, T4S1_inform)
+
+market_prices_T4S1 = as.data.frame(market_prices_T4S1)
+ T4S1_beliefs = cbind( T4S1_beliefs,market_prices_T4S1)
+colnames( T4S1_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 2
+ T4S2_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S2_beliefs = cbind( T4S2_beliefs,y)
+ 
+}
+ T4S2_beliefs = as.data.frame( T4S2_beliefs)
+ T4S2_beliefs$means = apply( T4S2_beliefs,1,mean)
+ T4S2_beliefs$sd = apply( T4S2_beliefs,1,sd)
+
+ T4S2_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S2 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S2_inform = cbind( T4S2_inform,y)
+ 
+}
+ 
+ T4S2_inform = as.data.frame( T4S2_inform)
+ T4S2_inform$means_i = apply( T4S2_inform,1,mean)
+ T4S2_inform$sd_i = apply( T4S2_inform,1,sd)
+
+ T4S2_beliefs = cbind( T4S2_beliefs, T4S2_inform)
+market_prices_T4S2 = as.data.frame(market_prices_T4S2)
+ T4S2_beliefs = cbind( T4S2_beliefs,market_prices_T4S2)
+colnames( T4S2_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 3
+ T4S3_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S3_beliefs = cbind( T4S3_beliefs,y)
+ 
+}
+ T4S3_beliefs = as.data.frame( T4S3_beliefs)
+ T4S3_beliefs$means = apply( T4S3_beliefs,1,mean)
+ T4S3_beliefs$sd = apply( T4S3_beliefs,1,sd)
+
+ T4S3_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S3 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S3_inform = cbind( T4S3_inform,y)
+ 
+}
+ 
+ T4S3_inform = as.data.frame( T4S3_inform)
+ T4S3_inform$means_i = apply( T4S3_inform,1,mean)
+ T4S3_inform$sd_i = apply( T4S3_inform,1,sd)
+
+ T4S3_beliefs = cbind( T4S3_beliefs, T4S3_inform)
+market_prices_T4S3 = as.data.frame(market_prices_T4S3)
+ T4S3_beliefs = cbind( T4S3_beliefs,market_prices_T4S3)
+colnames( T4S3_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+
+### Session 4
+ T4S4_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S4_beliefs = cbind( T4S4_beliefs,y)
+ 
+}
+ T4S4_beliefs = as.data.frame( T4S4_beliefs)
+ T4S4_beliefs$means = apply( T4S4_beliefs,1,mean)
+ T4S4_beliefs$sd = apply( T4S4_beliefs,1,sd)
+
+ T4S4_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S4 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S4_inform = cbind( T4S4_inform,y)
+ 
+}
+ 
+ T4S4_inform = as.data.frame( T4S4_inform)
+ T4S4_inform$means_i = apply( T4S4_inform,1,mean)
+ T4S4_inform$sd_i = apply( T4S4_inform,1,sd)
+
+ T4S4_beliefs = cbind( T4S4_beliefs, T4S4_inform)
+market_prices_T4S4 = as.data.frame(market_prices_T4S4)
+ T4S4_beliefs = cbind( T4S4_beliefs,market_prices_T4S4)
+colnames( T4S4_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+### Session 5
+ T4S5_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S5_beliefs = cbind( T4S5_beliefs,y)
+ 
+}
+ T4S5_beliefs = as.data.frame( T4S5_beliefs)
+ T4S5_beliefs$means = apply( T4S5_beliefs,1,mean)
+ T4S5_beliefs$sd = apply( T4S5_beliefs,1,sd)
+
+ T4S5_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S5 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S5_inform = cbind( T4S5_inform,y)
+ 
+}
+ 
+ T4S5_inform = as.data.frame( T4S5_inform)
+ T4S5_inform$means_i = apply( T4S5_inform,1,mean)
+ T4S5_inform$sd_i = apply( T4S5_inform,1,sd)
+
+ T4S5_beliefs = cbind( T4S5_beliefs, T4S5_inform)
+market_prices_T4S5 = as.data.frame(market_prices_T4S5)
+ T4S5_beliefs = cbind( T4S5_beliefs,market_prices_T4S5)
+colnames( T4S5_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+### Session 6
+ T4S6_beliefs = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[15])
+y = rbind(y,x)
+}
+   T4S6_beliefs = cbind( T4S6_beliefs,y)
+ 
+}
+ T4S6_beliefs = as.data.frame( T4S6_beliefs)
+ T4S6_beliefs$means = apply( T4S6_beliefs,1,mean)
+ T4S6_beliefs$sd = apply( T4S6_beliefs,1,sd)
+
+ T4S6_inform = c()
+
+ y=c()
+for (k in 1:6){
+ y=c()
+for(i in 1:15){
+x = unfactor(as.factor(data.frame( T4S6 %>% filter(V3=="subjects", V2==2,V5==k,V4==i)))[14])
+y = rbind(y,x)
+}
+   T4S6_inform = cbind( T4S6_inform,y)
+ 
+}
+ 
+ T4S6_inform = as.data.frame( T4S6_inform)
+ T4S6_inform$means_i = apply( T4S6_inform,1,mean)
+ T4S6_inform$sd_i = apply( T4S6_inform,1,sd)
+
+ T4S6_beliefs = cbind( T4S6_beliefs, T4S6_inform)
+market_prices_T4S6 = as.data.frame(market_prices_T4S6)
+ T4S6_beliefs = cbind( T4S6_beliefs,market_prices_T4S6)
+colnames( T4S6_beliefs) = c("Subject1B","Subject2B","Subjec T4B","Subject4B","Subject5B","Subject6B","mean","sd","Subject1B_i","Subject2B_i","Subjec T4B_i","Subject4B_i","Subject5B_i","Subject6B_i","mean_i","sd_i","prices")
+
+
+period = c(1:15)
+
+ T4S1_b_plot = ggplot(data= T4S1_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 1") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S2_b_plot = ggplot(data= T4S2_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 2") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S3_b_plot = ggplot(data= T4S3_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 3") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S4_b_plot = ggplot(data= T4S4_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 4") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S5_b_plot = ggplot(data= T4S5_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 5") +
+  geom_line(aes(y = prices, color = "price"))
+
+ T4S6_b_plot = ggplot(data= T4S6_beliefs, aes(x=period)) + 
+  geom_line(aes(y = mean, color = "Belief")) + geom_point(aes(y = mean, color = "Belief")) +
+       
+  geom_line(aes(y = mean_i, color = "Inform")) + geom_point(aes(y = mean_i, color = "Inform")) +
+      theme(legend.title = element_blank()) + 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Prices")  +
+  ggtitle("Session 6") +
+  geom_line(aes(y = prices, color = "price"))
+
+ggarrange( T4S1_b_plot,  T4S2_b_plot, T4S3_b_plot, T4S4_b_plot, T4S5_b_plot, T4S6_b_plot,
+                    ncol = 1, nrow = 6, legend = "top")
+```
+

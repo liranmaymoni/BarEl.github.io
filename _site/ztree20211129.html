@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Lahav, Maymoni &amp; Neugebauer" />
 
 
-<title>about</title>
+<title>Communication in Asset Markets - Aggregate Level</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,9 +20,10 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
 <script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 
@@ -34,21 +36,6 @@
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
-}
-</script>
 
 
 
@@ -259,6 +246,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -266,6 +316,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -300,17 +360,61 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">about</h1>
+<h1 class="title toc-ignore">Communication in Asset Markets - Aggregate Level</h1>
+<h4 class="author">Lahav, Maymoni &amp; Neugebauer</h4>
 
 </div>
 
 
-<div id="about" class="section level1">
-<h1>About</h1>
+<div id="hl-crt-and-gender-distribution" class="section level1">
+<h1><span class="header-section-number">1</span> HL, CRT and Gender distribution</h1>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-3-1.png" width="864" /></p>
+</div>
+<div id="prices-vs-intentions" class="section level1 tabset">
+<h1><span class="header-section-number">2</span> Prices vs Intentions</h1>
+<div id="control-treatment" class="section level2">
+<h2><span class="header-section-number">2.1</span> Control Treatment</h2>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-4-1.png" width="864" /></p>
+</div>
+<div id="treatment-3" class="section level2">
+<h2><span class="header-section-number">2.2</span> Treatment 3</h2>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-5-1.png" width="864" /></p>
+</div>
+<div id="treatment-4" class="section level2">
+<h2><span class="header-section-number">2.3</span> Treatment 4</h2>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-6-1.png" width="864" /></p>
+</div>
+</div>
+<div id="beliefs-vs-inform-to-others" class="section level1">
+<h1><span class="header-section-number">3</span> Beliefs vs Inform to Others</h1>
+<div id="treatment-3-1" class="section level2 tabset">
+<h2><span class="header-section-number">3.1</span> Treatment 3</h2>
+<div id="with-s.d" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> With S.D</h3>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-7-1.png" width="864" /></p>
+</div>
+<div id="without-s.d" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Without S.D</h3>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-8-1.png" width="864" /></p>
+</div>
+</div>
+<div id="treatment-4-1" class="section level2 tabset">
+<h2><span class="header-section-number">3.2</span> Treatment 4</h2>
+<div id="with-s.d-1" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> With S.D</h3>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-9-1.png" width="864" /></p>
+</div>
+<div id="without-s.d-1" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Without S.D</h3>
+<p><img src="ztree20211129_files/figure-html/unnamed-chunk-10-1.png" width="864" /></p>
+</div>
+</div>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -343,6 +447,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

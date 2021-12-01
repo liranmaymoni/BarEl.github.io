@@ -1,9 +1,11 @@
-name: "Startups in a Peripheral Region"
+name: "Communication in Asset Markets"
 navbar:
-  title: "Startups & Periphery"
+  title: "Lahav, Maymoni & Neugebauer"
   left:
-    - text: "Subjects level"
+    - text: "Subjects Level"
       href: ztree_subjects_level20211129.html
+    - text: "Aggregate Level"
+      href: ztree20211129.html
 output:
   html_document:
     theme: cosmo
