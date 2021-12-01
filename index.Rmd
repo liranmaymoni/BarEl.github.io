@@ -1,9 +1,9 @@
 ---
-title: "Startups in a Peripheral Region"
-author: "Bar-El & Maymoni"
+title: "Communication in Asset Markets"
+author: "Lahav, Maymoni & Neugebauer"
 output: html_document
 ---
 
-**Last update: 16/7/2019**
+**Last update: 12/1/2021**
 
 Site created
