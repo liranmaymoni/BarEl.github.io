@@ -1,0 +1,746 @@
+---
+title: "Gender Differences" 
+author: "Lahav, Maymoni & Neugebauer"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+    highlight: tango
+---
+
+$Manipulation_{i,t} = \frac{|inform_{i,t}-belief_{i,t}|}{belief_{i,t}}$
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+library(tidyverse)
+library(varhandle)
+library(ggplot2)
+library(ggpubr)
+library(knitr)
+ 
+```
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+T1S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0844team1.csv", header=FALSE, sep=",")
+T1S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0851team2.csv", header=FALSE, sep=",")
+T1S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211115/211115_0853team3.csv", header=FALSE, sep=",")
+T1S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1708team1.csv", header=FALSE, sep=",")
+T1S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1702team2.csv", header=FALSE, sep=",")
+T1S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/control/20211128/211128_1711team3.csv", header=FALSE, sep=",")
+T3S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0845team1.csv", header=FALSE, sep=",")
+T3S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0847team2.csv", header=FALSE, sep=",")
+T3S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211116/211116_0816team3.csv", header=FALSE, sep=",")
+T3S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0938team1.csv", header=FALSE, sep=",")
+T3S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0924team2.csv", header=FALSE, sep=",")
+T3S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment3/20211122/211122_0926team3.csv", header=FALSE, sep=",")
+T4S1 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1128team1.csv", header=FALSE, sep=",")
+T4S2 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1100team2.csv", header=FALSE, sep=",")
+T4S3 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211114/211114_1109team3.csv", header=FALSE, sep=",")
+T4S4 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1334team1.csv", header=FALSE, sep=",")
+T4S5 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1320team2.csv", header=FALSE, sep=",")
+T4S6 <- read.csv(file="C:/Users/Liran/Google Drive/Study/PhD/a_peny_for_your_toughts/ztree/treatment4/20211128/211128_1323team3.csv", header=FALSE, sep=",")
+```
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+
+subjects_b_i = c()
+
+for (t in 3:4){
+  for (s in 1:6){
+    for (p in 1:6){
+      
+    mydata = unfactor(as.factor(data.frame(get(paste("T",t,"S",s,sep="")) %>% filter(V3=="subjects", V2==2,V5==p,))[c(1:15),15]))
+    subjects_b_i = as.data.frame(cbind(subjects_b_i,mydata))
+    names(subjects_b_i)[length(names(subjects_b_i))]<-paste("T",t,"S",s,"P",p,"_B",sep="")
+    } 
+    }
+}
+for (t in 3:4){
+  for (s in 1:6){
+    for (p in 1:6){
+      
+    mydata = unfactor(as.factor(data.frame(get(paste("T",t,"S",s,sep="")) %>% filter(V3=="subjects", V2==2,V5==p,))[c(1:15),14]))
+    subjects_b_i = as.data.frame(cbind(subjects_b_i,mydata))
+    names(subjects_b_i)[length(names(subjects_b_i))]<-paste("T",t,"S",s,"P",p,"_i",sep="")
+    } 
+    }
+}
+
+subjects_m = c()
+
+for (t in 3:4){
+  for (s in 1:6){
+    for (p in 1:6){
+      subjects_m_p = c()
+      for (i in 1:15){
+b = unfactor(as.factor(data.frame(get(paste("T",t,"S",s,sep="")) %>% filter(V3=="subjects", V2==2,V5==p,))[i,15]))
+i = unfactor(as.factor(data.frame(get(paste("T",t,"S",s,sep="")) %>% filter(V3=="subjects", V2==2,V5==p,))[i,14]))
+x = abs(i-b)/b
+subjects_m_p = rbind(subjects_m_p,x)
+      }
+      subjects_m = as.data.frame(cbind(subjects_m,subjects_m_p))
+      names(subjects_m)[length(names(subjects_m))]<-paste("T",t,"S",s,"P",p,"_m",sep="")
+    }
+  }
+}
+
+subjects_m = as.data.frame(t(subjects_m))
+names(subjects_m) = c("p1","p2","p3","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15")
+subjects_m$total = rowSums (subjects_m, na.rm = TRUE)
+
+Gender_T1S1 = unfactor(as.factor(data.frame(T1S1 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T1S2 = unfactor(as.factor(data.frame(T1S2 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T1S3 = unfactor(as.factor(data.frame(T1S3 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T1S4 = unfactor(as.factor(data.frame(T1S4 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T1S5 = unfactor(as.factor(data.frame(T1S5 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T1S6 = unfactor(as.factor(data.frame(T1S6 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T3S1 = unfactor(as.factor(data.frame(T3S1 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T3S2 = unfactor(as.factor(data.frame(T3S2 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T3S3 = unfactor(as.factor(data.frame(T3S3 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T3S4 = unfactor(as.factor(data.frame(T3S4 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T3S5 = unfactor(as.factor(data.frame(T3S5 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T3S6 = unfactor(as.factor(data.frame(T3S6 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2566]))
+Gender_T4S1 = unfactor(as.factor(data.frame(T4S1 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T4S2 = unfactor(as.factor(data.frame(T4S2 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T4S3 = unfactor(as.factor(data.frame(T4S3 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T4S4 = unfactor(as.factor(data.frame(T4S4 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T4S5 = unfactor(as.factor(data.frame(T4S5 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+Gender_T4S6 = unfactor(as.factor(data.frame(T4S6 %>% filter(V3=="subjects", V2==2, V4==15))[c(1:6),2594]))
+
+gender_vector = c()
+
+ for (t in 3:4){
+  for (s in 1:6){
+    gender_vector = as.data.frame(gender_vector)
+    x = as.data.frame(get(paste("Gender_T",t,"S",s,sep="")))
+    gender_vector = rbind(gender_vector,x)
+    
+  }
+ }
+
+subjects_m$gender = gender_vector$`get(paste("Gender_T", t, "S", s, sep = ""))`
+
+t = c(rep(3,36),rep(4,36))
+subjects_m$t = t
+s = c(rep(1,6),rep(2,6),rep(3,6),rep(4,6),rep(5,6),rep(6,6),rep(1,6),rep(2,6),rep(3,6),rep(4,6),rep(5,6),rep(6,6))
+subjects_m$s = s
+
+period = c(1:15)
+```
+
+# Manipulation Graph Differences
+
+$Manipulation_{males,t} =\sum_{i=1}^{males} \frac{Manipulation_{i,t}}{males}$
+
+$Manipulation_{females,t} =\sum_{i=1}^{females} \frac{Manipulation_{i,t}}{females}$
+
+
+## Sessions in Treatment 3
+
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE,fig.width=9, fig.height=9}
+
+###Session 1
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==1,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==1,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S1 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 1, Females:",n_female," Males:",n_men))
+
+###Session 2
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==2,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==2,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S2 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 2, Females:",n_female," Males:",n_men))
+
+###Session 3
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==3,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==3,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S3 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 3, Females:",n_female," Males:",n_men))
+
+###Session 4
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==4,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==4,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S4 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 4, Females:",n_female," Males:",n_men))
+
+###Session 5
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==5,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==5,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S5 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 5, Females:",n_female," Males:",n_men))
+
+###Session 6
+
+female =  as.data.frame(subjects_m%>% filter(t==3, s==6,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3, s==6,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S6 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 6, Females:",n_female," Males:",n_men))
+
+ggarrange(S1, S2,S3,S4,S5,S6,
+                    ncol = 2, nrow = 3, legend = "top",common.legend = TRUE)
+```
+
+## Sessions in Treatment 4
+
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE,fig.width=9, fig.height=9}
+
+###Session 1
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==1,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==1,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S1 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 1, Females:",n_female," Males:",n_men))
+
+###Session 2
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==2,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==2,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S2 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 2, Females:",n_female," Males:",n_men))
+
+###Session 3
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==3,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==3,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S3 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 3, Females:",n_female," Males:",n_men))
+
+###Session 4
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==4,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==4,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S4 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 4, Females:",n_female," Males:",n_men))
+
+###Session 5
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==5,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==5,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S5 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 5, Females:",n_female," Males:",n_men))
+
+###Session 6
+
+female =  as.data.frame(subjects_m%>% filter(t==4, s==6,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4, s==6,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+S6 = ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Session 6, Females:",n_female," Males:",n_men))
+
+ggarrange(S1, S2,S3,S4,S5,S6,
+                    ncol = 2, nrow = 3, legend = "top",common.legend = TRUE)
+```
+
+## Entire Treatment 3
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+
+
+female =  as.data.frame(subjects_m%>% filter(t==3,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==3,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Treatment 3, Females:",n_female," Males:",n_men))
+
+average_female =c()
+average_female$p1 = mean(female$p1 , na.rm = TRUE)
+average_female$p2 = mean(female$p2 , na.rm = TRUE)
+average_female$p3 = mean(female$p3 , na.rm = TRUE)
+average_female$p4 = mean(female$p4 , na.rm = TRUE)
+average_female$p5 = mean(female$p5 , na.rm = TRUE)
+average_female$p6 = mean(female$p6 , na.rm = TRUE)
+average_female$p7 = mean(female$p7 , na.rm = TRUE)
+average_female$p8 = mean(female$p8 , na.rm = TRUE)
+average_female$p9 = mean(female$p9 , na.rm = TRUE)
+average_female$p10 = mean(female$p10 , na.rm = TRUE)
+average_female$p11 = mean(female$p11 , na.rm = TRUE)
+average_female$p12 = mean(female$p12 , na.rm = TRUE)
+average_female$p13 = mean(female$p13 , na.rm = TRUE)
+average_female$p14 = mean(female$p14 , na.rm = TRUE)
+average_female$p15 = mean(female$p15 , na.rm = TRUE)
+
+average_female = as.data.frame(average_female)
+
+average_male =c()
+average_male$p1 = mean(men$p1 , na.rm = TRUE)
+average_male$p2 = mean(men$p2 , na.rm = TRUE)
+average_male$p3 = mean(men$p3 , na.rm = TRUE)
+average_male$p4 = mean(men$p4 , na.rm = TRUE)
+average_male$p5 = mean(men$p5 , na.rm = TRUE)
+average_male$p6 = mean(men$p6 , na.rm = TRUE)
+average_male$p7 = mean(men$p7 , na.rm = TRUE)
+average_male$p8 = mean(men$p8 , na.rm = TRUE)
+average_male$p9 = mean(men$p9 , na.rm = TRUE)
+average_male$p10 = mean(men$p10 , na.rm = TRUE)
+average_male$p11 = mean(men$p11 , na.rm = TRUE)
+average_male$p12 = mean(men$p12 , na.rm = TRUE)
+average_male$p13 = mean(men$p13 , na.rm = TRUE)
+average_male$p14 = mean(men$p14 , na.rm = TRUE)
+average_male$p15 = mean(men$p15 , na.rm = TRUE)
+
+average_male = as.data.frame(average_male)
+
+average_all = rbind(average_female,average_male)
+
+#t.test
+p1 = t.test(female$p1, men$p1, alternative = "two.sided", var.equal = FALSE)
+p2 = t.test(female$p2, men$p2, alternative = "two.sided", var.equal = FALSE)
+p3 = t.test(female$p3, men$p3, alternative = "two.sided", var.equal = FALSE)
+p4 = t.test(female$p4, men$p4, alternative = "two.sided", var.equal = FALSE)
+p5 = t.test(female$p5, men$p5, alternative = "two.sided", var.equal = FALSE)
+p6 = t.test(female$p6, men$p6, alternative = "two.sided", var.equal = FALSE)
+p7 = t.test(female$p7, men$p7, alternative = "two.sided", var.equal = FALSE)
+p8 = t.test(female$p8, men$p8, alternative = "two.sided", var.equal = FALSE)
+p9 = t.test(female$p9, men$p9, alternative = "two.sided", var.equal = FALSE)
+p10 = t.test(female$p10, men$p10, alternative = "two.sided", var.equal = FALSE)
+p11 = t.test(female$p11, men$p11, alternative = "two.sided", var.equal = FALSE)
+p12 = t.test(female$p12, men$p12, alternative = "two.sided", var.equal = FALSE)
+p13 = t.test(female$p13, men$p13, alternative = "two.sided", var.equal = FALSE)
+p14 = t.test(female$p14, men$p14, alternative = "two.sided", var.equal = FALSE)
+p15 = t.test(female$p15, men$p15, alternative = "two.sided", var.equal = FALSE)
+
+p_value =c()
+p_value$p1 = p1$p.value
+p_value$p2 = p2$p.value
+p_value$p3 = p3$p.value
+p_value$p4 = p4$p.value
+p_value$p5 = p5$p.value
+p_value$p6 = p6$p.value
+p_value$p7 = p7$p.value
+p_value$p8 = p8$p.value
+p_value$p9 = p9$p.value
+p_value$p10 = p10$p.value
+p_value$p11 = p11$p.value
+p_value$p12 = p12$p.value
+p_value$p13 = p13$p.value
+p_value$p14 = p14$p.value
+p_value$p15 = p15$p.value
+
+average_all = rbind(average_all,p_value)
+
+row.names(average_all) = c("Females","Males", "P-Value")
+
+kable(average_all, caption = "Mean, P-Value represent the unpaired two-samples t-test (two-tailed tests) between famles and males", digits=3)
+
+
+```
+
+## Entire Treatment 4
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+
+
+female =  as.data.frame(subjects_m%>% filter(t==4,gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(t==4,gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Treatment 4, Females:",n_female," Males:",n_men))
+
+average_female =c()
+average_female$p1 = mean(female$p1 , na.rm = TRUE)
+average_female$p2 = mean(female$p2 , na.rm = TRUE)
+average_female$p3 = mean(female$p3 , na.rm = TRUE)
+average_female$p4 = mean(female$p4 , na.rm = TRUE)
+average_female$p5 = mean(female$p5 , na.rm = TRUE)
+average_female$p6 = mean(female$p6 , na.rm = TRUE)
+average_female$p7 = mean(female$p7 , na.rm = TRUE)
+average_female$p8 = mean(female$p8 , na.rm = TRUE)
+average_female$p9 = mean(female$p9 , na.rm = TRUE)
+average_female$p10 = mean(female$p10 , na.rm = TRUE)
+average_female$p11 = mean(female$p11 , na.rm = TRUE)
+average_female$p12 = mean(female$p12 , na.rm = TRUE)
+average_female$p13 = mean(female$p13 , na.rm = TRUE)
+average_female$p14 = mean(female$p14 , na.rm = TRUE)
+average_female$p15 = mean(female$p15 , na.rm = TRUE)
+
+average_female = as.data.frame(average_female)
+
+average_male =c()
+average_male$p1 = mean(men$p1 , na.rm = TRUE)
+average_male$p2 = mean(men$p2 , na.rm = TRUE)
+average_male$p3 = mean(men$p3 , na.rm = TRUE)
+average_male$p4 = mean(men$p4 , na.rm = TRUE)
+average_male$p5 = mean(men$p5 , na.rm = TRUE)
+average_male$p6 = mean(men$p6 , na.rm = TRUE)
+average_male$p7 = mean(men$p7 , na.rm = TRUE)
+average_male$p8 = mean(men$p8 , na.rm = TRUE)
+average_male$p9 = mean(men$p9 , na.rm = TRUE)
+average_male$p10 = mean(men$p10 , na.rm = TRUE)
+average_male$p11 = mean(men$p11 , na.rm = TRUE)
+average_male$p12 = mean(men$p12 , na.rm = TRUE)
+average_male$p13 = mean(men$p13 , na.rm = TRUE)
+average_male$p14 = mean(men$p14 , na.rm = TRUE)
+average_male$p15 = mean(men$p15 , na.rm = TRUE)
+
+average_male = as.data.frame(average_male)
+
+average_all = rbind(average_female,average_male)
+
+#t.test
+p1 = t.test(female$p1, men$p1, alternative = "two.sided", var.equal = FALSE)
+p2 = t.test(female$p2, men$p2, alternative = "two.sided", var.equal = FALSE)
+p3 = t.test(female$p3, men$p3, alternative = "two.sided", var.equal = FALSE)
+p4 = t.test(female$p4, men$p4, alternative = "two.sided", var.equal = FALSE)
+p5 = t.test(female$p5, men$p5, alternative = "two.sided", var.equal = FALSE)
+p6 = t.test(female$p6, men$p6, alternative = "two.sided", var.equal = FALSE)
+p7 = t.test(female$p7, men$p7, alternative = "two.sided", var.equal = FALSE)
+p8 = t.test(female$p8, men$p8, alternative = "two.sided", var.equal = FALSE)
+p9 = t.test(female$p9, men$p9, alternative = "two.sided", var.equal = FALSE)
+p10 = t.test(female$p10, men$p10, alternative = "two.sided", var.equal = FALSE)
+p11 = t.test(female$p11, men$p11, alternative = "two.sided", var.equal = FALSE)
+p12 = t.test(female$p12, men$p12, alternative = "two.sided", var.equal = FALSE)
+p13 = t.test(female$p13, men$p13, alternative = "two.sided", var.equal = FALSE)
+p14 = t.test(female$p14, men$p14, alternative = "two.sided", var.equal = FALSE)
+p15 = t.test(female$p15, men$p15, alternative = "two.sided", var.equal = FALSE)
+
+p_value =c()
+p_value$p1 = p1$p.value
+p_value$p2 = p2$p.value
+p_value$p3 = p3$p.value
+p_value$p4 = p4$p.value
+p_value$p5 = p5$p.value
+p_value$p6 = p6$p.value
+p_value$p7 = p7$p.value
+p_value$p8 = p8$p.value
+p_value$p9 = p9$p.value
+p_value$p10 = p10$p.value
+p_value$p11 = p11$p.value
+p_value$p12 = p12$p.value
+p_value$p13 = p13$p.value
+p_value$p14 = p14$p.value
+p_value$p15 = p15$p.value
+
+average_all = rbind(average_all,p_value)
+
+row.names(average_all) = c("Females","Males", "P-Value")
+
+kable(average_all, caption = "Mean, P-Value represent the unpaired two-samples t-test (two-tailed tests) between famles and males", digits=3)
+```
+
+## Entire Treatment 3+4
+
+```{r, echo= FALSE, message=FALSE,warning = FALSE}
+
+
+female =  as.data.frame(subjects_m%>% filter(gender==1))[,1:15]
+men = as.data.frame(subjects_m%>% filter(gender==0))[,1:15]
+
+n_female = nrow(female)
+n_men = nrow(men)
+
+female_mean = t(female %>% summarise_each(funs(mean(., na.rm = TRUE))))
+men_mean = t(men %>% summarise_each(funs(mean(., na.rm = TRUE))))
+mydata = as.data.frame(cbind(female_mean,men_mean,period))
+
+names(mydata) = c("female","men","period")
+
+ggplot(data=mydata, aes(x=period)) + 
+  geom_line(aes(y = men, color = "males")) + geom_point(aes(y = men, color = "males"))+ 
+  geom_line(aes(y = female, color = "females")) + geom_point(aes(y = female, color = "females"))+
+      theme(legend.title = element_blank())+ 
+  scale_x_continuous(name = "Period", breaks = seq(0, 15, by = 1)) +
+  scale_y_continuous(name = "Manipulation")  +
+  ggtitle(paste("Treatment 3+4, Females:",n_female," Males:",n_men))
+
+average_female =c()
+average_female$p1 = mean(female$p1 , na.rm = TRUE)
+average_female$p2 = mean(female$p2 , na.rm = TRUE)
+average_female$p3 = mean(female$p3 , na.rm = TRUE)
+average_female$p4 = mean(female$p4 , na.rm = TRUE)
+average_female$p5 = mean(female$p5 , na.rm = TRUE)
+average_female$p6 = mean(female$p6 , na.rm = TRUE)
+average_female$p7 = mean(female$p7 , na.rm = TRUE)
+average_female$p8 = mean(female$p8 , na.rm = TRUE)
+average_female$p9 = mean(female$p9 , na.rm = TRUE)
+average_female$p10 = mean(female$p10 , na.rm = TRUE)
+average_female$p11 = mean(female$p11 , na.rm = TRUE)
+average_female$p12 = mean(female$p12 , na.rm = TRUE)
+average_female$p13 = mean(female$p13 , na.rm = TRUE)
+average_female$p14 = mean(female$p14 , na.rm = TRUE)
+average_female$p15 = mean(female$p15 , na.rm = TRUE)
+
+average_female = as.data.frame(average_female)
+
+average_male =c()
+average_male$p1 = mean(men$p1 , na.rm = TRUE)
+average_male$p2 = mean(men$p2 , na.rm = TRUE)
+average_male$p3 = mean(men$p3 , na.rm = TRUE)
+average_male$p4 = mean(men$p4 , na.rm = TRUE)
+average_male$p5 = mean(men$p5 , na.rm = TRUE)
+average_male$p6 = mean(men$p6 , na.rm = TRUE)
+average_male$p7 = mean(men$p7 , na.rm = TRUE)
+average_male$p8 = mean(men$p8 , na.rm = TRUE)
+average_male$p9 = mean(men$p9 , na.rm = TRUE)
+average_male$p10 = mean(men$p10 , na.rm = TRUE)
+average_male$p11 = mean(men$p11 , na.rm = TRUE)
+average_male$p12 = mean(men$p12 , na.rm = TRUE)
+average_male$p13 = mean(men$p13 , na.rm = TRUE)
+average_male$p14 = mean(men$p14 , na.rm = TRUE)
+average_male$p15 = mean(men$p15 , na.rm = TRUE)
+
+average_male = as.data.frame(average_male)
+
+average_all = rbind(average_female,average_male)
+
+#t.test
+p1 = t.test(female$p1, men$p1, alternative = "two.sided", var.equal = FALSE)
+p2 = t.test(female$p2, men$p2, alternative = "two.sided", var.equal = FALSE)
+p3 = t.test(female$p3, men$p3, alternative = "two.sided", var.equal = FALSE)
+p4 = t.test(female$p4, men$p4, alternative = "two.sided", var.equal = FALSE)
+p5 = t.test(female$p5, men$p5, alternative = "two.sided", var.equal = FALSE)
+p6 = t.test(female$p6, men$p6, alternative = "two.sided", var.equal = FALSE)
+p7 = t.test(female$p7, men$p7, alternative = "two.sided", var.equal = FALSE)
+p8 = t.test(female$p8, men$p8, alternative = "two.sided", var.equal = FALSE)
+p9 = t.test(female$p9, men$p9, alternative = "two.sided", var.equal = FALSE)
+p10 = t.test(female$p10, men$p10, alternative = "two.sided", var.equal = FALSE)
+p11 = t.test(female$p11, men$p11, alternative = "two.sided", var.equal = FALSE)
+p12 = t.test(female$p12, men$p12, alternative = "two.sided", var.equal = FALSE)
+p13 = t.test(female$p13, men$p13, alternative = "two.sided", var.equal = FALSE)
+p14 = t.test(female$p14, men$p14, alternative = "two.sided", var.equal = FALSE)
+p15 = t.test(female$p15, men$p15, alternative = "two.sided", var.equal = FALSE)
+
+p_value =c()
+p_value$p1 = p1$p.value
+p_value$p2 = p2$p.value
+p_value$p3 = p3$p.value
+p_value$p4 = p4$p.value
+p_value$p5 = p5$p.value
+p_value$p6 = p6$p.value
+p_value$p7 = p7$p.value
+p_value$p8 = p8$p.value
+p_value$p9 = p9$p.value
+p_value$p10 = p10$p.value
+p_value$p11 = p11$p.value
+p_value$p12 = p12$p.value
+p_value$p13 = p13$p.value
+p_value$p14 = p14$p.value
+p_value$p15 = p15$p.value
+
+average_all = rbind(average_all,p_value)
+
+row.names(average_all) = c("Females","Males", "P-Value")
+
+kable(average_all, caption = "Mean, P-Value represent the unpaired two-samples t-test (two-tailed tests) between famles and males", digits=3)
+```
+
+#Overall Index

@@ -3,9 +3,11 @@ navbar:
   title: "Lahav, Maymoni & Neugebauer"
   left:
     - text: "Subjects Level"
-      href: ztree_subjects_level20211129.html
+      href: ztree_subjects_level20211202.html
     - text: "Aggregate Level"
-      href: ztree20211129.html
+      href: ztree20211202.html
+    - text: "Gender Differences"
+      href: gender20211202.html
 output:
   html_document:
     theme: cosmo
